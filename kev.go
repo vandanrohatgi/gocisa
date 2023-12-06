@@ -8,13 +8,15 @@ import (
 )
 
 const (
-	KEV_Feed_URL = "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
-	KEV_CSV_URL  = "https://www.cisa.gov/sites/default/files/csv/known_exploited_vulnerabilities.csv"
+	BaseURL    = "https://www.cisa.gov/sites/default/files"
+	KEVFeedURL = "/feeds/known_exploited_vulnerabilities.json"
+	KEVCSVURL  = "/csv/known_exploited_vulnerabilities.csv"
 )
 
 // KEV represents the Known Exploited Vulnerabilities from CISA (CyberSecurity
 // & Infrastructure Security Agency)
 type KEV struct {
+	BaseURL   string
 	Client    *http.Client
 	Catalogue *Catalogue
 }
@@ -42,30 +44,29 @@ type Vulnerabilities struct {
 	Notes                      *string `json:"notes,omitempty"`
 }
 
+// GetNewClient returns a new client with default values
+func GetNewClient() *KEV {
+	return &KEV{
+		BaseURL: BaseURL,
+		Client:  http.DefaultClient,
+	}
+}
+
+// FetchCatalogue reaches out to cisa.gov, stores the records and returns an
+// error if anything goes wrong.
 func (k *KEV) FetchCatalogue() error {
-	r, err := http.NewRequest("GET", KEV_Feed_URL, nil)
+	r, err := http.NewRequest(http.MethodGet, k.BaseURL+KEVFeedURL, nil)
 	if err != nil {
 		return fmt.Errorf("error creating request: %w", err)
 	}
 
 	response, err := k.Client.Do(r)
 	if err != nil {
-		return fmt.Errorf("error making request to %s: %w", KEV_Feed_URL, err)
+		return fmt.Errorf("error making request to %s: %w", KEVFeedURL, err)
 	}
 	err = json.NewDecoder(response.Body).Decode(&k.Catalogue)
 	if err != nil {
 		return fmt.Errorf("error decoding JSON response: %w", err)
 	}
-	//
-	// var respBody []byte
-	// _, err = response.Body.Read(respBody)
-	// if err != nil {
-	// 	return fmt.Errorf("error reading response body: %w", err)
-	// }
-	//
-	// err = json.Unmarshal(respBody, &k.Catalogue)
-	// if err != nil {
-	// 	return fmt.Errorf("error decoding response body: %w", err)
-	// }
 	return nil
 }

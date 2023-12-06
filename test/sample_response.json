@@ -1,0 +1,32 @@
+{
+    "title": "CISA Catalog of Known Exploited Vulnerabilities",
+    "catalogVersion": "2023.12.05",
+    "dateReleased": "2023-12-05T16:45:55.5762Z",
+    "count": 1048,
+    "vulnerabilities": [
+        {
+            "cveID": "CVE-2021-27104",
+            "vendorProject": "Accellion",
+            "product": "FTA",
+            "vulnerabilityName": "Accellion FTA OS Command Injection Vulnerability",
+            "dateAdded": "2021-11-03",
+            "shortDescription": "Accellion FTA contains an OS command injection vulnerability exploited via a crafted POST request to various admin endpoints.",
+            "requiredAction": "Apply updates per vendor instructions.",
+            "dueDate": "2021-11-17",
+            "knownRansomwareCampaignUse": "Known",
+            "notes": ""
+        },
+        {
+            "cveID": "CVE-2021-27102",
+            "vendorProject": "Accellion",
+            "product": "FTA",
+            "vulnerabilityName": "Accellion FTA OS Command Injection Vulnerability",
+            "dateAdded": "2021-11-03",
+            "shortDescription": "Accellion FTA contains an OS command injection vulnerability exploited via a local web service call.",
+            "requiredAction": "Apply updates per vendor instructions.",
+            "dueDate": "2021-11-17",
+            "knownRansomwareCampaignUse": "Known",
+            "notes": ""
+        }
+    ]
+}
