@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -64,9 +66,33 @@ func (k *KEV) FetchCatalogue() error {
 	if err != nil {
 		return fmt.Errorf("error making request to %s: %w", KEVFeedURL, err)
 	}
+	defer response.Body.Close()
+
 	err = json.NewDecoder(response.Body).Decode(&k.Catalogue)
 	if err != nil {
 		return fmt.Errorf("error decoding JSON response: %w", err)
 	}
+	return nil
+}
+
+// DumpCatalogue creates a JSON file of the KEV catalogue
+func (k *KEV) DumpCatalogue(fileName string) error {
+	if filepath.Ext(fileName) == "" {
+		fileName += ".json"
+	}
+	f, err := os.Create(fileName)
+	if err != nil {
+		return fmt.Errorf("error creating file: %w", err)
+	}
+	defer f.Close()
+	byteData, err := json.MarshalIndent(k.Catalogue, " ", "  ")
+	if err != nil {
+		return fmt.Errorf("error creating JSON object: %w", err)
+	}
+	_, err = f.Write(byteData)
+	if err != nil {
+		return fmt.Errorf("error writing to file: %w", err)
+	}
+
 	return nil
 }

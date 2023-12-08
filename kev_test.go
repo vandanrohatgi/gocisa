@@ -1,6 +1,7 @@
 package gocisa
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -35,7 +36,37 @@ func Test_fetchCatalogue(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(k.Catalogue.Vulnerabilities) != 2 {
-		t.Fatalf("expected 2 records, found %d", len(k.Catalogue.Vulnerabilities))
+	if len(k.Catalogue.Vulnerabilities) != *k.Catalogue.Count {
+		t.Fatalf("expected %d records, found %d", *k.Catalogue.Count, len(k.Catalogue.Vulnerabilities))
 	}
+
+}
+
+func Test_dumpCatalogue(t *testing.T) {
+	tmpDir := os.TempDir()
+	fileName := tmpDir + "/cisa_kev.json"
+	k := &KEV{
+		Catalogue: &Catalogue{
+			Title: Ptr[string]("test title"),
+			Count: Ptr[int](1),
+			Vulnerabilities: []*Vulnerabilities{
+				{
+					CveID: Ptr[string]("CVE-1234-5678"),
+				},
+			},
+		},
+	}
+
+	err := k.DumpCatalogue(fileName)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(fileName); errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("file %s does not exist: %v", fileName, err)
+	}
+}
+
+// Ptr helps to get the address of fields to create test data
+func Ptr[K int | string](v K) *K {
+	return &v
 }
