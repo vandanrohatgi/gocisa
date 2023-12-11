@@ -45,6 +45,7 @@ func Test_fetchCatalogue(t *testing.T) {
 func Test_dumpCatalogue(t *testing.T) {
 	tmpDir := os.TempDir()
 	fileName := tmpDir + "/cisa_kev.json"
+
 	k := &KEV{
 		Catalogue: &Catalogue{
 			Title: Ptr[string]("test title"),
@@ -61,12 +62,9 @@ func Test_dumpCatalogue(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer os.Remove(fileName)
+
 	if _, err := os.Stat(fileName); errors.Is(err, os.ErrNotExist) {
 		t.Fatalf("file %s does not exist: %v", fileName, err)
 	}
-}
-
-// Ptr helps to get the address of fields to create test data
-func Ptr[K int | string](v K) *K {
-	return &v
 }

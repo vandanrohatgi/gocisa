@@ -6,13 +6,14 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
 const (
-	BaseURL    = "https://www.cisa.gov/sites/default/files"
-	KEVFeedURL = "/feeds/known_exploited_vulnerabilities.json"
-	KEVCSVURL  = "/csv/known_exploited_vulnerabilities.csv"
+	BaseURL    = "https://www.cisa.gov"
+	KEVFeedURL = "/sites/default/files/feeds/known_exploited_vulnerabilities.json"
+	KEVCSVURL  = "/sites/default/files/csv/known_exploited_vulnerabilities.csv"
 )
 
 // KEV represents the Known Exploited Vulnerabilities from CISA (CyberSecurity
@@ -95,4 +96,16 @@ func (k *KEV) DumpCatalogue(fileName string) error {
 	}
 
 	return nil
+}
+
+// LookupProduct performs a fuzzy search across the whole vulnerability
+// catalogue to find items for a specific product
+func (k *KEV) LookupProduct(product string, fuzzy bool) []*Vulnerabilities {
+	var results []*Vulnerabilities
+	for _, vuln := range k.Catalogue.Vulnerabilities {
+		if Contains(*vuln.Product, product) {
+			results = append(results, vuln)
+		}
+	}
+	return results
 }
