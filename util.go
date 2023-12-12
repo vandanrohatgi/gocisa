@@ -1,15 +1,12 @@
 package gocisa
 
-import "strings"
+import (
+	"strings"
+)
 
 // Ptr helps to get the address of fields to create test data
 func Ptr[K int | string](v K) *K {
 	return &v
-}
-
-// FuzzySearch searches for the item in the target string in a fuzzy format
-func FuzzySearch(item, target string) bool {
-	return false
 }
 
 // Contains searches for a substring after converting the input to a lower case

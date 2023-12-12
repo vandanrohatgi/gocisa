@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
 const (
@@ -100,11 +102,20 @@ func (k *KEV) DumpCatalogue(fileName string) error {
 
 // LookupProduct performs a fuzzy search across the whole vulnerability
 // catalogue to find items for a specific product
-func (k *KEV) LookupProduct(product string, fuzzy bool) []*Vulnerabilities {
+func (k *KEV) LookupProduct(product string, fuzzySearch bool) []*Vulnerabilities {
 	var results []*Vulnerabilities
-	for _, vuln := range k.Catalogue.Vulnerabilities {
-		if Contains(*vuln.Product, product) {
-			results = append(results, vuln)
+
+	if fuzzySearch {
+		for _, vuln := range k.Catalogue.Vulnerabilities {
+			if fuzzy.MatchFold(product, *vuln.Product) {
+				results = append(results, vuln)
+			}
+		}
+	} else {
+		for _, vuln := range k.Catalogue.Vulnerabilities {
+			if Contains(*vuln.Product, product) {
+				results = append(results, vuln)
+			}
 		}
 	}
 	return results
