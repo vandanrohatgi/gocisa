@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/lithammer/fuzzysearch/fuzzy"
@@ -100,8 +99,8 @@ func (k *KEV) DumpCatalogue(fileName string) error {
 	return nil
 }
 
-// LookupProduct performs a fuzzy search across the whole vulnerability
-// catalogue to find items for a specific product
+// LookupProduct performs a (fuzzy) search across the whole vulnerability
+// catalogue to find vulns for a specific product
 func (k *KEV) LookupProduct(product string, fuzzySearch bool) []*Vulnerabilities {
 	var results []*Vulnerabilities
 
@@ -119,4 +118,20 @@ func (k *KEV) LookupProduct(product string, fuzzySearch bool) []*Vulnerabilities
 		}
 	}
 	return results
+}
+
+func (k *KEV) ReleasedAfter(t time.Time) []*Vulnerabilities {
+	return []*Vulnerabilities{}
+}
+
+func (k *KEV) ReleasedBefore(t time.Time) []*Vulnerabilities {
+	return []*Vulnerabilities{}
+}
+
+func (k *KEV) ReleasedOn(t time.Time) []*Vulnerabilities {
+	return []*Vulnerabilities{}
+}
+
+func (k *KEV) VulnerabilityType(vulnType string) []*Vulnerabilities {
+	return []*Vulnerabilities{}
 }

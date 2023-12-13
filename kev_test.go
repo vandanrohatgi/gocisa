@@ -1,6 +1,7 @@
 package gocisa
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -66,5 +67,57 @@ func Test_dumpCatalogue(t *testing.T) {
 
 	if _, err := os.Stat(fileName); errors.Is(err, os.ErrNotExist) {
 		t.Fatalf("file %s does not exist: %v", fileName, err)
+	}
+}
+
+func Test_lookupProduct(t *testing.T) {
+	f, err := os.ReadFile("test/sample_response.json")
+	if err != nil {
+		t.Fatalf("error reading test data: %v", err)
+	}
+	var k KEV
+
+	err = json.Unmarshal(f, &k.Catalogue)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var tests = []struct {
+		name  string
+		input string
+		fuzzy bool
+		want  int
+	}{
+		{
+			name:  "normal search",
+			input: "fatcat",
+			fuzzy: false,
+			want:  1,
+		},
+		{
+			name:  "normal fuzzy search",
+			input: "fat",
+			fuzzy: true,
+			want:  1,
+		},
+		{
+			name:  "no match normal search",
+			input: "fakeProd",
+			fuzzy: false,
+			want:  0,
+		},
+		{
+			name:  "no match fuzzy search",
+			input: "fka",
+			fuzzy: true,
+			want:  0,
+		},
+	}
+
+	for _, i := range tests {
+		match := k.LookupProduct(i.input, i.fuzzy)
+		if len(match) != i.want {
+			t.Fatalf("%s expected %d, got: %d", i.name, i.want, len(match))
+		}
 	}
 }
