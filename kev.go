@@ -135,3 +135,7 @@ func (k *KEV) ReleasedOn(t time.Time) []*Vulnerabilities {
 func (k *KEV) VulnerabilityType(vulnType string) []*Vulnerabilities {
 	return []*Vulnerabilities{}
 }
+
+func (k *KEV) LookupCVE(cveID string) []*Vulnerabilities {
+	return []*Vulnerabilities{}
+}
