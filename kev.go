@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/lithammer/fuzzysearch/fuzzy"
@@ -136,6 +137,13 @@ func (k *KEV) VulnerabilityType(vulnType string) []*Vulnerabilities {
 	return []*Vulnerabilities{}
 }
 
-func (k *KEV) LookupCVE(cveID string) []*Vulnerabilities {
-	return []*Vulnerabilities{}
+// LookupCVE searches for a particular cve in the Catalogue and returns a bool
+// accordingly
+func (k *KEV) LookupCVE(cveID string) (*Vulnerabilities, bool) {
+	for _, i := range k.Catalogue.Vulnerabilities {
+		if *i.CveID == strings.ToUpper(cveID) {
+			return i, true
+		}
+	}
+	return &Vulnerabilities{}, false
 }

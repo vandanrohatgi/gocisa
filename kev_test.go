@@ -13,12 +13,9 @@ func Test_fetchCatalogue(t *testing.T) {
 	testMux := http.NewServeMux()
 
 	testMux.HandleFunc(KEVFeedURL, func(w http.ResponseWriter, _ *http.Request) {
-		f, err := os.ReadFile("test/sample_response.json")
-		if err != nil {
-			t.Fatalf("error reading test data: %v", err)
-		}
+		f, _ := os.ReadFile("test/sample_response.json")
 
-		_, err = w.Write(f)
+		_, err := w.Write(f)
 		if err != nil {
 			t.Fatalf("error writing response: %v", err)
 		}
@@ -71,13 +68,10 @@ func Test_dumpCatalogue(t *testing.T) {
 }
 
 func Test_lookupProduct(t *testing.T) {
-	f, err := os.ReadFile("test/sample_response.json")
-	if err != nil {
-		t.Fatalf("error reading test data: %v", err)
-	}
+	f, _ := os.ReadFile("test/sample_response.json")
 	var k KEV
 
-	err = json.Unmarshal(f, &k.Catalogue)
+	err := json.Unmarshal(f, &k.Catalogue)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -118,6 +112,29 @@ func Test_lookupProduct(t *testing.T) {
 		match := k.LookupProduct(i.input, i.fuzzy)
 		if len(match) != i.want {
 			t.Fatalf("%s expected %d, got: %d", i.name, i.want, len(match))
+		}
+	}
+}
+
+func Test_LookupCVE(t *testing.T) {
+	f, _ := os.ReadFile("test/sample_response.json")
+
+	var k = GetNewClient()
+	json.Unmarshal(f, &k.Catalogue)
+
+	tests := []struct {
+		name  string
+		input string
+		want  bool
+	}{
+		{"valid cve", "CVE-2021-27104", true},
+		{"invalid cve", "CVE-1234-1234", false},
+	}
+
+	for _, i := range tests {
+		_, found := k.LookupCVE(i.input)
+		if found != i.want {
+			t.Fatalf("expected: %t, received: %t", i.want, found)
 		}
 	}
 }

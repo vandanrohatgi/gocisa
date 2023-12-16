@@ -1,9 +1,8 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
+	"github.com/vandanrohatgi/gocisa"
 )
 
 func init() {
@@ -12,9 +11,10 @@ func init() {
 
 var catalogueCmd = &cobra.Command{
 	Use:   "get-catalogue",
-	Short: "Print the version number of Hugo",
-	Long:  `All software has versions. This is Hugo's`,
+	Short: "get the KEV catalogue from cisa.gov",
+	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hugo Static Site Generator v0.9 -- HEAD")
+		k := gocisa.GetNewClient()
+		k.FetchCatalogue()
 	},
 }
