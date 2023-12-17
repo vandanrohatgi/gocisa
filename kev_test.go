@@ -138,3 +138,25 @@ func Test_LookupCVE(t *testing.T) {
 		}
 	}
 }
+
+func Test_VulnerabilityType(t *testing.T) {
+	f := readTestData()
+	var k = GetNewClient()
+	json.Unmarshal(f, &k.Catalogue)
+
+	tests := []struct {
+		name  string
+		input string
+		want  int
+	}{
+		{"valid search", "injection", 1},
+		{"invalid search", "Server side request forgery", 0},
+	}
+
+	for _, i := range tests {
+		output := k.VulnerabilityType(i.input)
+		if len(output) != i.want {
+			t.Fatalf("%s expected: %d, received: %d", i.name, i.want, len(output))
+		}
+	}
+}

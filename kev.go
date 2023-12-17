@@ -133,8 +133,18 @@ func (k *KEV) ReleasedOn(t time.Time) []*Vulnerabilities {
 	return []*Vulnerabilities{}
 }
 
+// VulnerabilityType performs a fuzzy search across the vulnerabilityName and
+// shortDescription.
+// This method has a chance to return false positives.
 func (k *KEV) VulnerabilityType(vulnType string) []*Vulnerabilities {
-	return []*Vulnerabilities{}
+	var results []*Vulnerabilities
+	for _, i := range k.Catalogue.Vulnerabilities {
+		matches := fuzzy.FindFold(vulnType, []string{*i.ShortDescription, *i.VulnerabilityName})
+		if len(matches) != 0 {
+			results = append(results, i)
+		}
+	}
+	return results
 }
 
 // LookupCVE searches for a particular cve in the Catalogue and returns a bool
