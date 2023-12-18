@@ -6,4 +6,4 @@ Kudos:
 
 Making my life easier since 2023: https://mholt.github.io/json-to-go/
 
-fuzzy search: github.com/lithammer/fuzzysearch 
+fuzzy search: https://github.com/lithammer/fuzzysearch
